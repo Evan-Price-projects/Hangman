@@ -4,8 +4,7 @@ import time
 #got scrabbles words from http://www.poslarchive.com/math/scrabble/lists/common-6.html
 
 def scores(words, score, counter):
-    print(words)
-    print(len(words))
+    print("\n"+words)
     helper0 =['e','a','i','o','n','r','t','l','s','u']
     helper1 =['d','g']                
     helper2 =['b','c','m','p']
@@ -37,7 +36,6 @@ def scores(words, score, counter):
 
 def scoretable(board, solution, blist, scoreboard, timeout_start, len_soln):
     counter = 0
-    x=0
     while time.time() < timeout_start:
         print(timeout_start + 1 - time.time())    
         if len(board) == 1:
@@ -57,60 +55,63 @@ def scoretable(board, solution, blist, scoreboard, timeout_start, len_soln):
                     print("success")
                     timeout_start = timeout_start + len_soln
                     return scoreboard
-                board = str(input("\nGuess a letter:\n"))
+                board = str(input("\nGuess a letter1:\n"))
             else:
                 for i in range(0, len(blist)):
                     print(blist[i], end = ' ')
+                print("\nWrong!\nScore: " + str(scoreboard))
+                board = str(input("\nGuess a letter2:\n"))
         else:
             for i in range(0, len(blist)):
                 print(blist[i], end = ' ')
             print("\nScore: " + str(scoreboard))
-            board = str(input("\nIncorrect!\n"))
+            board = str(input("\nIncorrect! Guess a Letter:\n"))
+            scoreboard = scoretable(board, solution, blist, scoreboard, timeout_start, len_soln)
+
 
 wordamount = -1
 scoreboard = 0
 timeout_start = time.time() + 1
-while wordamount != 0:
+while time.time() < timeout_start:# Petr Krampl  https://stackoverflow.com/questions/13293269/how-would-i-stop-a-while-loop-after-n-amount-of-time
     wordamount = random.randint(2,8)
-    len_soln=(5*wordamount)
-    while time.time() < timeout_start:# Petr Krampl  https://stackoverflow.com/questions/13293269/how-would-i-stop-a-while-loop-after-n-amount-of-time
-        timeout_start = timeout_start + len_soln
-        print(timeout_start + 1 - time.time())
-        if wordamount == 0:
-            break
-        csv_reader = csv.reader(open('words.csv', mode='r'))
-        line_count = 0
-        colm_count = 0
-        va = 0
-        changer = []
-        solution = ""
-        #cnt = 0
-        for row in csv_reader:
-            line_count += 1
-            if len(list(row[1])) == wordamount:
-                changer.append(line_count)
+    len_soln=(2*wordamount)
+    timeout_start = timeout_start + len_soln
+    print(timeout_start + 1 - time.time())
+    if wordamount == 0:
+        break
+    csv_reader = csv.reader(open('words.csv', mode='r'))
+    line_count = 0
+    colm_count = 0
+    va = 0
+    changer = []
+    solution = ""
+    #cnt = 0
+    for row in csv_reader:
+        line_count += 1
+        if len(list(row[1])) == wordamount:
+            changer.append(line_count)
 
-        x = random.randint(min(changer), max(changer))
+    x = random.randint(min(changer), max(changer))
 
-        csv_reader = csv.reader(open('words.csv', mode='r'))
-        top = 0
-        i = 0
-        for col in csv_reader:
-            colm_count += 1
-            if colm_count == x:
-                if row[i] != " ":
-                    top += 1
-                d = random.randint(0, (top-1))
-                solution = col[d]
-                print(col[d])
-        bord = ""
-        for i in range(0,wordamount):
-                bord += "_"
-                print("_ ", end = '')
-        blist = list(bord)
-        board = str(input("\nGuess a letter:\n"))
-        scoreboard = scoretable(board, solution, blist, scoreboard, timeout_start, len_soln)
-    if time.time() >= timeout_start + len_soln:
-        print("Game Over: \nFinal Score: " + str(scoreboard))
-    
+    csv_reader = csv.reader(open('words.csv', mode='r'))
+    top = 0
+    i = 0
+    for col in csv_reader:
+        colm_count += 1
+        if colm_count == x:
+            if row[i] != " ":
+                top += 1
+            d = random.randint(0, (top-1))
+            solution = col[d]
+#            print(col[d])
+    bord = ""
+    for i in range(0,wordamount):
+            bord += "_"
+            print("_ ", end = '')
+    blist = list(bord)
+    board = str(input("\nGuess a letter:\n"))
+    scoreboard = scoretable(board, solution, blist, scoreboard, timeout_start, len_soln)
+print("Game Over: \nFinal Score: " + str(scoreboard))
+
+
 
